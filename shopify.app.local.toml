@@ -1,0 +1,46 @@
+# Same app as shopify.app.toml, used with: shopify app dev --use-localhost --config local
+# Webhook subscriptions are omitted because Shopify rejects https://localhost URLs for
+# managed webhooks during dev preview. Use shopify.app.toml + npm run dev:tunnel when you
+# need Cloudflare tunneling and full webhook registration.
+
+client_id = "46b34d2e6fbf89eb5e71e0aa5dc51a16"
+name = "inverntory-sorting-app"
+application_url = "https://example.com"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = false
+
+[webhooks]
+api_version = "2026-07"
+
+[access_scopes]
+scopes = "write_products,write_metaobjects,write_metaobject_definitions"
+
+[auth]
+redirect_urls = [ "https://example.com/api/auth" ]
+
+[product.metafields.app.demo_info]
+type = "single_line_text_field"
+name = "Demo Source Info"
+description = "Tracks products created by the Shopify app template for development"
+
+  [product.metafields.app.demo_info.access]
+  admin = "merchant_read_write"
+
+[metaobjects.app.example]
+name = "Example"
+description = "An example metaobject definition created by this template"
+
+  [metaobjects.app.example.access]
+  admin = "merchant_read_write"
+
+[metaobjects.app.example.fields.title]
+name = "Title"
+type = "single_line_text_field"
+required = true
+
+[metaobjects.app.example.fields.description]
+name = "Description"
+type = "multi_line_text_field"
