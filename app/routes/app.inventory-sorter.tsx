@@ -5,15 +5,17 @@ import {
   ActionFunctionArgs,
   useActionData,
 } from "react-router";
-import { Page, Card, BlockStack } from "@shopify/polaris";
+import { Page, Card, BlockStack, Select } from "@shopify/polaris";
 import { useState } from "react";
 import { ProductNode, CollectionNode } from "app/types/inventory";
 import {
   GetCollectionProducts,
-  getCollections,
+  getCollections
 } from "app/services/collection.server";
 import CollectionSelector from "app/components/collectionSelector";
 import ProductsList from "app/components/productsList";
+import { type SortMode, sortProducts } from "app/utils/sortProducts";
+
 
 // loader function to fetch collections
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -45,28 +47,47 @@ export default function InventorySorterPage() {
     value: collection.id,
   }));
 
+  const sortOptions = [
+    {label : "Inventory high to low" , value:"inventory_desc"},
+    {label:"Inventory low to high" , value:"inventory_asc"},
+    {label:"Out of stock first" ,value :"out_of_stock"}
+  ]
+
   const [selectedCollectionId, setSelectedCollectionId] = useState(
     collectionOptions[0]?.value || ""
   );
 
+  const [sortMode, setSortMode] = useState<SortMode>("inventory_desc");
+  const sortedProducts = actionData?.collectionProducts
+  ? sortProducts(actionData.collectionProducts, sortMode)
+  : [];
+ 
+  
   return (
     <Page>
       <ui-title-bar title="Inventory-Sorter" />
       <Card>
-        <BlockStack>
-          <CollectionSelector
-            collectionOptions={collectionOptions}
-            selectedCollectionId={selectedCollectionId}
-            setSelectedCollectionId={setSelectedCollectionId}
-          />
+  <BlockStack gap="400">
+    <CollectionSelector
+      collectionOptions={collectionOptions}
+      selectedCollectionId={selectedCollectionId}
+      setSelectedCollectionId={setSelectedCollectionId}
+    />
 
-          {actionData?.collectionProducts && (
-            <ProductsList collectionProducts={actionData.collectionProducts} />
-          )}
+    {actionData?.collectionProducts && (
+      <Select
+        label="Sort products"
+        options={sortOptions}
+        value={sortMode}
+        onChange={(value) => setSortMode(value as SortMode)}
+      />
+    )}
 
-         
-        </BlockStack>
-      </Card>
+    {actionData?.collectionProducts && (
+      <ProductsList collectionProducts={sortedProducts} />
+    )}
+  </BlockStack>
+</Card>
     </Page>
   );
 }

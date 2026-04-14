@@ -1,0 +1,19 @@
+TEST your app (this is very important)
+
+Don’t skip this.
+
+Check:
+
+Basic flow
+select collection → works?
+products load → correct?
+sorting changes → working?
+Edge cases
+collection with no products
+product with no image
+product with 0 inventory
+switching collections multiple times
+UI
+spacing okay?
+images loading?
+no console errors?
