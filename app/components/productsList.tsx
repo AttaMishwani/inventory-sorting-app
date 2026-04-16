@@ -6,9 +6,9 @@ type ProductsListProps = {
 };
 
 export default function ProductsList({ collectionProducts }: ProductsListProps) {
-  console.log(collectionProducts)
+
   return (
-    <BlockStack>
+    <s-section>
       <Text as="h3" variant="headingSm">
         Collection Products
       </Text>
@@ -42,6 +42,6 @@ export default function ProductsList({ collectionProducts }: ProductsListProps) 
           </Card>
         ))}
       </BlockStack>
-    </BlockStack>
+    </s-section>
   );
 }

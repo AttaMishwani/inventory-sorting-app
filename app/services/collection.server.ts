@@ -21,6 +21,7 @@ export async function getCollections(admin: any): Promise<CollectionNode[]> {
   const json = await response.json();
   const collections: CollectionNode[] =
     json?.data?.collections?.edges?.map((edge: any) => edge.node) ?? [];
+    console.log(collections);
   return collections;
 }
 
@@ -30,7 +31,7 @@ export async function GetCollectionProducts(
 ): Promise<ProductNode[]> {
   const response = await admin.graphql(
     `
-      #graphql
+      
       query GetCollectionProducts($id: ID!) {
         collection(id: $id) {
           id
@@ -91,4 +92,38 @@ export function sortCollectionProducts (Products :  ProductNode[] , sortMode : s
     : [];
 
     return sortedProducts
+}
+
+export async function reorderCollectionProducts(
+  admin: any,
+  collectionId: string,
+  moves: { id: string; newPosition: string }[],
+) {
+
+  const response  = await admin.graphql(
+    `
+    #graphql 
+    mutation collectionReorderProducts($id:ID! , $moves : [MoveInput!]!){
+    collectionReorderProducts(id:$id , moves:$moves){
+    job{
+    id
+    }
+    userErrors{
+    field
+    message
+    }
+    }
+    }
+    `,
+    {
+      variables: {
+        id: collectionId,
+        moves,
+      }
+    }
+  )
+
+  const data = await response.json();
+  console.log(data)
+  return data?.data
 }
